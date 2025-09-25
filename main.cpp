@@ -7,9 +7,9 @@
 static const float TOWN_MAX_MILES = (GAS_TANK_SIZE * TOWN_MPG);
 static const float HIGHWAY_MAX_MILES = (GAS_TANK_SIZE * HIGHWAY_MPG);
 
-static const char *TOWN_MILES_MSG = "Max distance traveled in town per tank of gas = ";
-static const char *HIGHWAY_MILES_MSG = "Max distance traveled on the highway per tank of gas = "; 
-static const char *INIT_MSG = "## Max Distances traveled per tank of gas in different settings ##";
+static const char *TOWN_MILES_MSG = "Max distance in miles traveled in town per tank of gas = ";
+static const char *HIGHWAY_MILES_MSG = "Max distance in miles traveled on the highway per tank of gas = "; 
+static const char *INIT_MSG = "## Max Distances in miles traveled per tank of gas in different settings ##";
 
 int main() {
 	printf("\n%s\n\n\n", INIT_MSG);
