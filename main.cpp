@@ -1,34 +1,20 @@
 #include <stdio.h>
 
-static const double YEAR_RISE = 1.5;
-static const double YEARS_5 = 5.0;
-static const double YEARS_7 = 7.0;
-static const double YEARS_10 = 10.0;
+#define HIGHWAY_MPG 28.9
+#define TOWN_MPG 23.5
+#define GAS_TANK_SIZE 20
 
-double olev_by_year(unsigned int num_years);
+static const float TOWN_MAX_MILES = (GAS_TANK_SIZE * TOWN_MPG);
+static const float HIGHWAY_MAX_MILES = (GAS_TANK_SIZE * HIGHWAY_MPG);
+
+static const char *TOWN_MILES_MSG = "Max distance traveled in town per tank of gas = ";
+static const char *HIGHWAY_MILES_MSG = "Max distance traveled on the highway per tank of gas = "; 
+static const char *INIT_MSG = "## Max Distances traveled per tank of gas in different settings ##";
 
 int main() {
-  double year_5_rise = olev_by_year(YEARS_5);
-  double year_7_rise = olev_by_year(YEARS_7);
-  double year_10_rise = olev_by_year(YEARS_10);
+	printf("\n%s\n\n\n", INIT_MSG);
+	printf("%s%g\n\n", HIGHWAY_MILES_MSG, HIGHWAY_MAX_MILES);
+	printf("%s%g\n\n", TOWN_MILES_MSG,TOWN_MAX_MILES);
 
-  printf("Ocean Levels in X years\n\n\n");
-
-  printf(
-    "In Five Years, the ocean will rise %f millimeters\n\n",
-    year_5_rise);
-
-  printf(
-    "In Seven Years, the ocean will rise %f millimeters\n\n",
-    year_7_rise);
-
-  printf(
-    "In Ten Years, the ocean will rise %f millimeters\n\n",
-    year_10_rise);
-
-  return 0;
+	return 0;
 }
-
-double olev_by_year(unsigned int num_years) {
-  return (num_years * YEAR_RISE);
-} 
