@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-static const double YEAR_RISE = 1.5;
-static const double YEARS_5 = 5.0;
-static const double YEARS_7 = 7.0;
-static const double YEARS_10 = 10.0;
+const double YEAR_RISE = 1.5;
+const double YEARS_5 = 5.0;
+const double YEARS_7 = 7.0;
+const double YEARS_10 = 10.0;
 
 double olev_by_year(unsigned int num_years);
 
