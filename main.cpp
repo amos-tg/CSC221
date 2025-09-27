@@ -15,15 +15,15 @@ int main() {
   printf("Ocean Levels in X years\n\n\n");
 
   printf(
-    "In Five Years, the ocean will rise %f millimeters\n\n",
+    "In Five Years, the ocean will rise %g millimeters\n\n",
     year_5_rise);
 
   printf(
-    "In Seven Years, the ocean will rise %f millimeters\n\n",
+    "In Seven Years, the ocean will rise %g millimeters\n\n",
     year_7_rise);
 
   printf(
-    "In Ten Years, the ocean will rise %f millimeters\n\n",
+    "In Ten Years, the ocean will rise %g millimeters\n\n",
     year_10_rise);
 
   return 0;
