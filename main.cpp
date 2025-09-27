@@ -1,20 +1,23 @@
 #include <stdio.h>
 
-#define HIGHWAY_MPG 28.9
-#define TOWN_MPG 23.5
-#define GAS_TANK_SIZE 20
+#define SURVEY_SIZE (16500.0f)
+#define PER_WEEK_PERCENT (0.15f)
+#define PREFER_CITRUS_PERCENT (0.58f)
 
-static const float TOWN_MAX_MILES = (GAS_TANK_SIZE * TOWN_MPG);
-static const float HIGHWAY_MAX_MILES = (GAS_TANK_SIZE * HIGHWAY_MPG);
+const double CUSTOMERS = SURVEY_SIZE * PER_WEEK_PERCENT;
+const double CUST_PREF_CITRUS = CUSTOMERS * PREFER_CITRUS_PERCENT;
 
-static const char *TOWN_MILES_MSG = "Max distance in miles traveled in town per tank of gas = ";
-static const char *HIGHWAY_MILES_MSG = "Max distance in miles traveled on the highway per tank of gas = "; 
-static const char *INIT_MSG = "## Max Distances in miles traveled per tank of gas in different settings ##";
+const char *INIT_MSG = 
+  "### Energy Drink Consumption Statistics ###";
+const char *CUST_MSG = 
+  "This many people consume energy drinks once or more per week: ";
+const char *PREF_CITRUS_MSG = 
+  "This many customers prefer citrus flavored energy drinks: ";
 
 int main() {
 	printf("\n%s\n\n\n", INIT_MSG);
-	printf("%s%g\n\n", HIGHWAY_MILES_MSG, HIGHWAY_MAX_MILES);
-	printf("%s%g\n\n", TOWN_MILES_MSG,TOWN_MAX_MILES);
+  printf("%s%g\n", CUST_MSG, CUSTOMERS);
+  printf("%s%g\n", PREF_CITRUS_MSG, CUST_PREF_CITRUS);
 
 	return 0;
 }
