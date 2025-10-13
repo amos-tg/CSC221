@@ -1,87 +1,63 @@
 #include <iomanip>
-#include <iostream>
+#include <random>
 #include <string>
+#include "query.cpp"
 
 using namespace std;
 
-// in cups
-const double sugar_ratio = 1.5 / 48.0;
-const double butter_ratio = 1.0 / 48.0;
-const double flour_ratio = 2.75 / 48.0;
+typedef struct Equation {
+  int answer;
+  int num1;
+	int num2;
+} Equation; 
 
-typedef struct ingredients{
-	double sugar; 
-	double butter;
-	double flour;
-} Ingredients; 
-
-// returns all the ingredients needed with their scaled values
-// based on num_cookies
-Ingredients get_ingredient_vals(unsigned int num_cookies);
-
-// returns -1 on failure / bad user input
-// otherwise, returns num_cookies as double
-double parse_to_double(std::string user_input);
+Equation gen_problem(void);
+void print_problem(Equation exp);
+void print_answer(Equation exp);
 
 int main(void) {
 	string user_input;
-	double num_cookies;
-	Ingredients ing;
-	const auto default_precision = cout.precision();
+	int user_answer;
 
-	cout << "How many cookies do you want to bake? : ";
-  cout.flush();
-	cin >> user_input;
+  Equation exp = gen_problem();
+	print_problem(exp);
 
-  num_cookies = parse_to_double(user_input);
-	if (num_cookies < 0.0) {
-    cerr << "Ruh roh Raggy, Invalid user input detected.";
-		exit(-1);
-	}
+	getline(cin, user_input);
+	user_answer = stoi(user_input);
 
-  ing = get_ingredient_vals(num_cookies);
-
-	cout << '\n' << endl;
-
-	cout << "Cups of Sugar needed:" << setprecision(3) << ing.sugar << endl;
-	cout << setprecision(default_precision);
-
-	cout << "Cups of Butter needed:" << setprecision(3) << ing.butter << endl;
-	cout << setprecision(default_precision);
-
-	cout << "Cups of Flour needed:" << setprecision(3) << ing.flour << endl; 
-	cout << setprecision(default_precision);
-
-	cout << '\n' << "Get baking pâtissier!" << endl;
-
-	return 0;
-}
-
-double parse_to_double(const string user_input) {
-	size_t x; 
-	double parsed;
-
-	// user_input.contains isn't working for some reason
-	// find will not accept non zero prefixed doubles 
-  if (user_input.find(".")) {
-  	parsed = stod(user_input, &x);
+	if (user_answer == exp.answer) {
+    cout << '\n' << "You got it right!" << endl;
 	} else {
-  	parsed = static_cast<double>(stoi(user_input, &x));
+		print_answer(exp);
 	}
 
-	if (parsed <= 0.0) {
-  	return -1.0;
-	}
-
-	return parsed;
+  return 0;
 }
 
-Ingredients get_ingredient_vals(unsigned int num_cookies) {
-  Ingredients ing{
-	  .sugar = num_cookies * sugar_ratio,
-		.butter = num_cookies * butter_ratio,
-		.flour = num_cookies * flour_ratio,
-	};
+Equation gen_problem(void) {
+	random_device rd;
+	Equation exp;
 
-	return ing;
+	mt19937 gen(rd());
+	uniform_int_distribution<> distrib(100, 999);
+
+  int num1 = distrib(gen);
+	int num2 = distrib(gen);
+  int answer = num1 + num2; 
+
+	return exp = {
+    .answer = answer,
+		.num1 = num1,
+		.num2 = num2, 
+	};
+}
+
+void print_problem(Equation exp) {
+  cout << setw(4) << exp.num1 << '\n';  
+	cout << '+' << exp.num2 << endl;
+	cout << "----" << endl;
+}
+
+void print_answer(Equation exp) {
+  cout << '\n' << "You got it wrong the answer was: " << exp.answer << endl;
 }
