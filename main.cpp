@@ -50,6 +50,6 @@ void days_in_month(int month, int year) {
 	} else if (!(year % 4) && month == Feb) {
     cout << leapFebDays << " days" << endl;  
 	} else {
-    cout << daysInMonth[month] << " days" << endl;
+    cout << daysInMonth[--month] << " days" << endl;
 	}
 }
