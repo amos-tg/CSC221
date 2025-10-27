@@ -34,6 +34,8 @@ int main(void) {
 
   double rate = get_rate(pkg_weight);
   get_and_print_cost(pkg_weight, miles_shipped, rate);
+
+  return 0;
 } 
 
 // returns 1 for an invalid weight 
