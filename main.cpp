@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include "query.cpp"
@@ -6,12 +7,17 @@ using namespace std;
 
 int verify_weight(int kilos); 
 int verify_miles(int miles);
-void get_and_print_cost(int kilos, int miles);
+double get_rate(int kilos);
+void get_and_print_cost(int kilos, int miles, double rate);
 
-const char *pkg_weight_query = "What is the package weight in kilograms? : ";
-const char *pkg_weight_err = "Error: kilos input > 0 kilos and kilos input <= 20 kilos";
-const char *miles_shipped_query = "In miles, how far will the package be shipped? : ";
-const char *miles_shipped_err = "Error: miles input >= 10 miles and miles input <= 3,000 miles";
+const char *pkg_weight_query = 
+  "What is the package weight in kilograms? : ";
+const char *pkg_weight_err = 
+  "Error: kilos input > 0 kilos and kilos input <= 20 kilos";
+const char *miles_shipped_query = 
+  "In miles, how far will the package be shipped? : ";
+const char *miles_shipped_err = 
+  "Error: miles input >= 10 miles and miles input <= 3,000 miles";
 
 int main(void) {
   int pkg_weight = stoi(query(pkg_weight_query));
@@ -26,7 +32,8 @@ int main(void) {
 		return 1;
 	} 
 
-  get_and_print_cost(pkg_weight, miles_shipped);
+  double rate = get_rate(pkg_weight);
+  get_and_print_cost(pkg_weight, miles_shipped, rate);
 } 
 
 // returns 1 for an invalid weight 
@@ -55,9 +62,27 @@ int verify_miles(int miles) {
 	}
 }
 
-void get_and_print_cost(int kilos, int miles) {
+// returns the rate based on kilos/package weight
+double get_rate(int kilos) {
   double rate; 
+
 	if (kilos <= 2) {
 		rate = 1.10;
-	} else if (kilos >= 6)
+	} else if (kilos <= 6) {
+    rate = 2.20; 
+  } else if (kilos <= 10) {
+    rate = 3.70;
+  } else if (kilos <= 20) {
+    rate = 4.80;
+  } 
+  
+  return rate;
+}
+
+void get_and_print_cost(int kilos, int miles, double rate) {
+  double miles_by_5h = static_cast<double>(miles) / 500.0;
+  double cost = miles_by_5h * rate;
+
+  cout << "Total Cost: $" << fixed 
+    << setprecision(2) << cost;
 }
