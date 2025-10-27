@@ -1,75 +1,55 @@
-#include <iomanip>
-#include <cmath>
-#include "query.cpp"
+#include <string>
+#include "query.cpp" 
 
 using namespace std;
 
-typedef struct string_fins {
-  string principal; 
-	string int_rate;
-	string ncompound;
-} StringFinancials;
+int month_check(int month_num);
+void days_in_month(int month, int year);
 
-typedef struct num_fins {
-  double principal;	
-	double int_rate;
-	double ncompound;
-} IntegralFinancials;
-
-IntegralFinancials transform_string_fins(StringFinancials fin);
-StringFinancials fetch_financials(void);
-void print_financials(IntegralFinancials fin, double total);
-double interest_calc(IntegralFinancials);
-
-const auto default_precision{ cout.precision() };
+const char *month_query = "Enter a month (1-12): ";
+const char *month_err = "Error: invalid month input";  
+const char *year_query = "Enter a year: ";
 
 int main(void) {
-  StringFinancials str_fin = fetch_financials();
-	IntegralFinancials int_fin = transform_string_fins(str_fin);
-	double total = interest_calc(int_fin);
-	print_financials(int_fin, total);
+  int month_num = stoi(query(month_query));   
+	if (1 == month_check(month_num)) {
+    cout << month_err << endl;
+    return -1;
+	}  
+
+  int year_num = stoi(query(year_query));
+	days_in_month(month_num, year_num);
+
+	return 0;
 }
 
-StringFinancials fetch_financials(void) {
-	StringFinancials fin = {
-    .principal = query("@ Fill in this investment info for me @\nPrincipal: "),	
-	  .int_rate = query("Interest Rate: "),
-    .ncompound = query("Number Of Yearly Compoundings: "),
-	};
-
-	return fin;
+// takes a string month number and validates whether or 
+// not it is between or equal to 1 and 12.
+// returns 0 for a valid month number.
+// returns 1 for an invalid month number.
+int month_check(int month_num) {
+  if (month_num >= 1 && month_num <= 12) {
+    return 0;
+	} else {
+		return 1;
+	}
 }
 
-double interest_calc(IntegralFinancials fin)
-{
-	double rate = fin.int_rate * 0.01;
-	return fin.principal * (pow((1.0 + rate/fin.ncompound), fin.ncompound));   
-}
+void days_in_month(int month, int year) {
+	const int leapFebDays = 29;
+	const int Feb = 2;
+	const int daysInMonth[12] = {
+		31, 28, 31,
+		30, 31, 30,
+	  31, 31, 30,
+		31, 30, 31 };
 
-IntegralFinancials transform_string_fins(StringFinancials str_fin) {
-	IntegralFinancials fin = {
-    .principal = stod(str_fin.principal),
-		.int_rate = stod(str_fin.int_rate),
-		.ncompound = stod(str_fin.ncompound),
-	};
-
-	return fin;
-}
-
-// longest line is 29 chars long
-void print_financials(IntegralFinancials fin, double total) {
-  double interest = total - fin.principal;
-
-	const string int_rate_msg{ "Interest Rate:      % " };
-	const string compd_msg{    "Times Compounded:     " };
-	const string princip_msg{  "Principal:          $ " };
-	const string int_msg{      "Interest:           $ " };
-	const string amt_sav_msg{  "Amount In Savings:  $ " };
-
-	cout << '\n' << '\n' << left << fixed << setprecision(2)
-		<< int_rate_msg << fin.int_rate << '\n'
-    << compd_msg << right  << fin.ncompound << '\n'
-		<< princip_msg << right << fin.principal << '\n'
-		<< int_msg << right << interest << '\n'
-		<< amt_sav_msg << right << total ;
+	// leap checker and day num printer
+	if (!(year % 100) && !(year % 400) && month == Feb) {
+    cout << leapFebDays << " days" << endl;
+	} else if (!(year % 4) && month == Feb) {
+    cout << leapFebDays << " days" << endl;  
+	} else {
+    cout << daysInMonth[month] << " days" << endl;
+	}
 }
