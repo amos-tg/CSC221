@@ -1,55 +1,63 @@
+#include <iostream>
 #include <string>
-#include "query.cpp" 
+#include "query.cpp"
 
 using namespace std;
 
-int month_check(int month_num);
-void days_in_month(int month, int year);
+int verify_weight(int kilos); 
+int verify_miles(int miles);
+void get_and_print_cost(int kilos, int miles);
 
-const char *month_query = "Enter a month (1-12): ";
-const char *month_err = "Error: invalid month input";  
-const char *year_query = "Enter a year: ";
+const char *pkg_weight_query = "What is the package weight in kilograms? : ";
+const char *pkg_weight_err = "Error: kilos input > 0 kilos and kilos input <= 20 kilos";
+const char *miles_shipped_query = "In miles, how far will the package be shipped? : ";
+const char *miles_shipped_err = "Error: miles input >= 10 miles and miles input <= 3,000 miles";
 
 int main(void) {
-  int month_num = stoi(query(month_query));   
-	if (1 == month_check(month_num)) {
-    cout << month_err << endl;
-    return -1;
-	}  
+  int pkg_weight = stoi(query(pkg_weight_query));
+	if (verify_weight(pkg_weight)) {
+		cout << pkg_weight_err << endl;
+    return 1;
+	} 
 
-  int year_num = stoi(query(year_query));
-	days_in_month(month_num, year_num);
-
-	return 0;
-}
-
-// takes a string month number and validates whether or 
-// not it is between or equal to 1 and 12.
-// returns 0 for a valid month number.
-// returns 1 for an invalid month number.
-int month_check(int month_num) {
-  if (month_num >= 1 && month_num <= 12) {
-    return 0;
-	} else {
+	int miles_shipped = stoi(query(miles_shipped_query));
+	if (verify_miles(miles_shipped)) {
+    cout << miles_shipped_err << endl;
 		return 1;
+	} 
+
+  get_and_print_cost(pkg_weight, miles_shipped);
+} 
+
+// returns 1 for an invalid weight 
+// returns 0 for a valid weight
+int verify_weight(int kilos) {
+	const int floor = 0; 
+	const int ceiling = 20;
+
+  if (kilos <= floor || kilos > ceiling) {
+    return 1;
+	} else {
+    return 0;
+	}
+} 
+
+// returns 1 for an invalid number of miles
+// returns 0 for a valid number of miles
+int verify_miles(int miles) {
+	const int floor = 10;
+	const int ceiling = 3000;
+
+	if (miles < floor || miles > ceiling) {
+    return 1;
+  } else { 
+		return 0;
 	}
 }
 
-void days_in_month(int month, int year) {
-	const int leapFebDays = 29;
-	const int Feb = 2;
-	const int daysInMonth[12] = {
-		31, 28, 31,
-		30, 31, 30,
-	  31, 31, 30,
-		31, 30, 31 };
-
-	// leap checker and day num printer
-	if (!(year % 100) && !(year % 400) && month == Feb) {
-    cout << leapFebDays << " days" << endl;
-	} else if (!(year % 4) && month == Feb) {
-    cout << leapFebDays << " days" << endl;  
-	} else {
-    cout << daysInMonth[--month] << " days" << endl;
-	}
+void get_and_print_cost(int kilos, int miles) {
+  double rate; 
+	if (kilos <= 2) {
+		rate = 1.10;
+	} else if (kilos >= 6)
 }
