@@ -41,6 +41,8 @@ int main(void) {
     return 1;  
   }
 
+  cout << '\n';
+
   switch (calc_option) {
     case 1:
       circle_area();
@@ -82,7 +84,6 @@ void rectangle_area(void) {
 void triangle_area(void) {
   double base_length = stod(query(triangle_base_length_query));
   double height = stod(query(triangle_height_query));
-  double area = base_length * height; 
+  double area = base_length * height * 0.5; 
   cout << "The Triangle's Area is: " << area << endl;
 }
-
