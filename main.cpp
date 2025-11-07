@@ -1,64 +1,74 @@
 #include <iostream>
-#include <string>
-#include "query.cpp"
+#include <fstream>
+#include <filesystem>
+
 
 using namespace std;
 
 
-const auto init_pop_query = 
-  "What is the initial organism population? : ";
-const auto init_pop_err = 
-  "Error: initial population cannot be less than 2";
+ifstream get_roster_ifstream(void);
 
-const auto pop_increase_query = 
-  "What is the average daily population increase as a percentage? : ";
-const auto pop_increase_err = 
-  "Error: population increase cannot be negative";
 
-const auto num_days_query = 
-  "What is the number of days the population will multiply over? : ";
-const auto num_days_err =
-  "Error: number of days cannot be less than one";
+const auto roster_fname = "LineUp.txt";
+const auto fexists_err = "Error: file does not exist";
+const auto fopen_err = "Error: failed to open file";
 
 
 int main(void) {
-  double population = 
-    stod(query(init_pop_query)); 
+  ifstream roster_ifstream = get_roster_ifstream();
 
-  // input validation, if less than 2 exit with failure code, 1.
-  if (population < 2) {
-    cerr << init_pop_err << endl;
+  // pull out the first name so I don't compare 
+  // against uninitialized strings in the loop.
+  string front, back, current;
+  roster_ifstream >> current;
+  front = back = current;
+  current.clear();
+
+  // counter must be initialized outside of the loop scope
+  // counter starts from one to account for the initialization
+  int i;
+  for (i = 1; roster_ifstream >> current; ++i, current.clear()) { 
+    if (current < front) {
+      front = current; 
+    } 
+
+    if (current > back) {
+      back = current;
+    }
+
+    /* this is how I tested the program.
+    cout << "current, i: " << i << " : " << current << endl;
+    cout << "front, i: " << i << " : " << front << endl;
+    cout << "back, i: " << i << " : " << back << '\n' << endl;*/
+  }
+
+  cout << '\n' << "Front of the line: " << front << endl;
+  cout << "Back of the line: " << back << endl;
+  cout << "Total number of students: " << i << endl; 
+}
+
+/// returns the roster_ifstream for the LineUp.txt file
+/// which must be present in the current working directory
+/// as dictated by filesystem::current_path.
+ifstream get_roster_ifstream(void) { 
+  ifstream roster_ifstream;
+
+  // gets LineUp.txt from cwd
+  filesystem::path name_list_path = 
+    filesystem::current_path().append(roster_fname);
+
+  // checks to make sure the file exists
+  if (!filesystem::exists(name_list_path)) {
+    cerr << fexists_err << endl;
+    exit(1); 
+  }
+
+  // opens the file and checks if it opened without err.
+  roster_ifstream.open(name_list_path);
+  if (!roster_ifstream.is_open()) {
+    cerr << fopen_err << endl; 
     exit(1);
   }
-
-  // div 100 produces decimal equivalent of percentage
-  double population_increase_percentage = 
-    stod(query(pop_increase_query)) / 100; 
-
-  // input validation, cannot be negative 
-  if (population_increase_percentage < 0) {
-    cerr << pop_increase_err << endl;
-    exit(1);
-  }
-
-  double number_days_multiplied = 
-    stod(query(num_days_query));
-
-  // input validation, do not allow number of 
-  // days less than one.
-  if (number_days_multiplied < 1) {
-    cerr << num_days_err << endl;
-    exit(1);
-  }
-
-  cout << '\n' << "Population size on day 1" 
-    << ": " << population << endl;
-
-  for (int i = 2; i <= number_days_multiplied; ++i) {
-    population = population + population_increase_percentage * population; 
-    cout << "Population size on day " << i 
-      << ": " << population << endl;
-  }
-
-  return 0;
+  
+  return roster_ifstream;
 }
