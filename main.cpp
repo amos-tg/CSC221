@@ -27,7 +27,7 @@ int main(void) {
   // counter must be initialized outside of the loop scope
   // counter starts from one to account for the initialization
   int i;
-  for (i = 1; roster_ifstream >> current; ++i, current.clear()) { 
+  for (i = 1; roster_ifstream >> current; ++i) { 
     if (current < front) {
       front = current; 
     } 
@@ -36,10 +36,12 @@ int main(void) {
       back = current;
     }
 
-    /* this is how I tested the program.
+    /* this is how I tested the program. 
     cout << "current, i: " << i << " : " << current << endl;
     cout << "front, i: " << i << " : " << front << endl;
     cout << "back, i: " << i << " : " << back << '\n' << endl;*/
+
+    current.clear();
   }
 
   cout << '\n' << "Front of the line: " << front << endl;
