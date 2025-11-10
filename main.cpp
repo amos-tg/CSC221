@@ -22,7 +22,6 @@ int main(void) {
   string front, back, current;
   roster_ifstream >> current;
   front = back = current;
-  current.clear();
 
   // counter must be initialized outside of the loop scope
   // counter starts from one to account for the initialization
@@ -41,7 +40,6 @@ int main(void) {
     cout << "front, i: " << i << " : " << front << endl;
     cout << "back, i: " << i << " : " << back << '\n' << endl;*/
 
-    current.clear();
   }
 
   cout << '\n' << "Front of the line: " << front << endl;
