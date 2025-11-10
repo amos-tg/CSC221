@@ -39,7 +39,6 @@ int main(void) {
     cout << "current, i: " << i << " : " << current << endl;
     cout << "front, i: " << i << " : " << front << endl;
     cout << "back, i: " << i << " : " << back << '\n' << endl;*/
-
   }
 
   cout << '\n' << "Front of the line: " << front << endl;
