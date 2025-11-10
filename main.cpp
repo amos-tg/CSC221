@@ -1,54 +1,60 @@
-#include <fstream>
+#include <iostream>
 #include <string>
-#include <filesystem>
-#include "query.cpp"
-
 
 using namespace std;
 
 
-auto const path_query = 
-  "What is the name of the data file? : ";
+// Pattern (A & B)'s max length patterns are the same
+const char *shared_pat = "++++++++++";
 
-auto const town_name_query = 
-  "What is the name of the Town? : ";
 
-auto const chart_header_msg = 
-  "Population Growth\n(each * represents 1,000 people)";
+void print_pat_a(void);
+void print_pat_b(void);
 
 
 int main(void) {
-  // Opens the user inputted data path and checks if it opened correctly
-  filesystem::path data_path = query(path_query); 
-  ifstream data_ifstream(data_path);
-  if (!data_ifstream.is_open()) {
-    cerr << "Error: ifstream open method failed" << endl;
-    exit(1);
-  }
+  cout << '\n' << "Pattern A:" << '\n';
+  print_pat_a();
 
-  // Queries the user for the town name
-  string town_name = query(town_name_query);
+  cout << '\n' << "Pattern B:" << '\n';
+  print_pat_b();
 
-  cout << '\n' << town_name << ' ' 
-    << chart_header_msg << endl;
-
-  // Iterates over each line of the data file, for each line,
-  // the year increases by 20 as per the directions.
-  int pop;
-  for (int year = 1900; data_ifstream >> pop; year += 20) {
-    string asts;
-    int ast_num = pop / 1000;
-    
-    // adds an asterisk for each 1,000 in the current line's integer
-    // which is supposed to represent population in the user's inputted town name
-    for (int i = 0; i < ast_num; ++i) {
-      asts = asts + '*';
-    }
-
-    // prints the bar chart line, as per the directions.
-    cout << year << ' ' << asts << endl; 
-  }
+  cout << '\n' << "Pattern A and B consecutively: " << '\n';
+  print_pat_a();
+  print_pat_b();
 
   return 0;
-} 
+}
 
+// prints out pattern A from the directions 
+void print_pat_a(void) {
+  int max_char = string(shared_pat).length();
+  string pat;
+
+  // add an extra + to pat for each iteration until 
+  // we reach the length of the pattern from the directions
+  // I decided not to use substr here because I think it's more clear
+  for (int i = 1; i <= max_char; ++i) {
+    cout << (pat += '+') << '\n';
+  }  
+
+  cout.flush();
+}
+
+// prints out pattern B from the directions
+void print_pat_b(void) {
+  string pat = shared_pat;
+  
+  // cast the length to size_t so I can use it in substr
+  size_t pat_len = static_cast<size_t>(pat.length());
+
+  // take a substr of the start of the pattern string from,
+  // 0 to i, where i is the length of the pattern decremented 
+  // by one each iteration until the pattern reaches a singular 
+  // char, '+'.
+  for (int i = pat_len; i >= 1; --i) {
+    cout <<  pat.substr(0, i) << '\n'; 
+  }
+
+  cout.flush();
+}
