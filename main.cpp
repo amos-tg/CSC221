@@ -1,60 +1,52 @@
 #include <iostream>
-#include <string>
+#include <random>
+
 
 using namespace std;
 
 
-// Pattern (A & B)'s max length patterns are the same
-const char *shared_pat = "++++++++++";
+int gen_rand_int(void);
 
 
-void print_pat_a(void);
-void print_pat_b(void);
+const auto guess_msg = 
+  "Guess the number: ";
+const auto lower_msg = 
+  "The number I'm thinking of is lower than that.";
+const auto higher_msg = 
+  "The number I'm thinking of is higher than that.";
 
 
 int main(void) {
-  cout << '\n' << "Pattern A:" << '\n';
-  print_pat_a();
+  int rand_num = gen_rand_int();
 
-  cout << '\n' << "Pattern B:" << '\n';
-  print_pat_b();
+  // testing code:
+  // cout << rand_num << endl;
 
-  cout << '\n' << "Pattern A and B consecutively: " << '\n';
-  print_pat_a();
-  print_pat_b();
+  int guess;
+  do {
+    cout << guess_msg;
+    cout.flush();
 
+    cin >> guess;
+
+    if (guess < rand_num) {
+      cout << higher_msg << endl; 
+    } else if (guess > rand_num) {
+      cout << lower_msg << endl;
+    }
+  } while (guess != rand_num);
+
+  cout << '\n' << "YOU GOT IT!!! " << u8"\u2713" << endl;
+  
   return 0;
 }
 
-// prints out pattern A from the directions 
-void print_pat_a(void) {
-  int max_char = string(shared_pat).length();
-  string pat;
-
-  // add an extra + to pat for each iteration until 
-  // we reach the length of the pattern from the directions
-  // I decided not to use substr here because I think it's more clear
-  for (int i = 1; i <= max_char; ++i) {
-    cout << (pat += '+') << '\n';
-  }  
-
-  cout.flush();
-}
-
-// prints out pattern B from the directions
-void print_pat_b(void) {
-  string pat = shared_pat;
-  
-  // cast the length to size_t so I can use it in substr
-  size_t pat_len = static_cast<size_t>(pat.length());
-
-  // take a substr of the start of the pattern string from,
-  // 0 to i, where i is the length of the pattern decremented 
-  // by one each iteration until the pattern reaches a singular 
-  // char, '+'.
-  for (int i = pat_len; i >= 1; --i) {
-    cout <<  pat.substr(0, i) << '\n'; 
-  }
-
-  cout.flush();
+/// returns a random integer between 1 and 9999
+/// (using the code I wrote for the MathTutor project)
+int gen_rand_int(void) {
+	random_device rd;
+	mt19937 gen(rd());
+	uniform_int_distribution<> distrib(1, 999);
+  int num = distrib(gen);
+  return num;
 }
