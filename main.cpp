@@ -29,6 +29,8 @@ int main(void) {
 
     cin >> guess;
 
+    // compares the numbers and prints out 
+    // the appropriate message.
     if (guess < rand_num) {
       cout << higher_msg << endl; 
     } else if (guess > rand_num) {
