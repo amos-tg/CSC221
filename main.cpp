@@ -22,7 +22,7 @@ int main(void) {
   // testing code:
   // cout << rand_num << endl;
 
-  int guess;
+  int guess, num_guesses = 0;
   do {
     cout << guess_msg;
     cout.flush();
@@ -32,13 +32,22 @@ int main(void) {
     // compares the numbers and prints out 
     // the appropriate message.
     if (guess < rand_num) {
-      cout << higher_msg << endl; 
+      cout << higher_msg << '\n' << endl; 
     } else if (guess > rand_num) {
-      cout << lower_msg << endl;
+      cout << lower_msg << '\n' << endl;
     }
+
+    ++num_guesses;
   } while (guess != rand_num);
 
-  cout << '\n' << "YOU GOT IT!!! " << u8"\u2713" << endl;
+
+  // makes sure the grammar is correct
+  cout << '\n' << "YOU GOT IT!!! " << u8"\u2713" << '\n';
+  if (num_guesses == 1) {
+    cout << "It took you " << num_guesses << " guess" << endl;
+  } else {
+    cout << "It took you " << num_guesses << " guesses" << endl;
+  }
   
   return 0;
 }
