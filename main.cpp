@@ -23,7 +23,6 @@ int main(void) {
   // cout << rand_num << endl;
 
   int guess, num_guesses = 0;
-  guess = num_guesses = 0;
   do {
     cout << guess_msg;
     cout.flush();
