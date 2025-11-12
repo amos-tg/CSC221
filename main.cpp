@@ -1,69 +1,86 @@
 #include <iostream>
-#include <random>
 
 
 using namespace std;
 
 
-int gen_rand_int(void);
-
-
-const auto guess_msg = 
-  "Guess the number: ";
-const auto lower_msg = 
-  "The number I'm thinking of is lower than that.";
-const auto higher_msg = 
-  "The number I'm thinking of is higher than that.";
+void getLengthWidth(double& length, double& width); 
+double calcPerimeter(double length, double width);
+double calcArea(double length, double width);
+void displayProperties(double perimeter, double area);
 
 
 int main(void) {
-  int rand_num = gen_rand_int();
+  const auto repeat_msg = 
+    "Do you want to repeat the process? : (y/n)";
+  const auto repeat_input_err = 
+    "Error: invalid choice, use y, Y, n, or N.";
 
-  // testing code:
-  // cout << rand_num << endl;
+  double length, width; 
+  char repeat; 
 
-  int guess, num_guesses = 0;
-  do {
-    cout << guess_msg;
-    cout.flush();
+  do { 
+    cout << '\n';
 
-    // gets input, checks that it was valid so the loop 
-    // doesn't run infinitely and spam stdout.
-    cin >> guess;
-    if (cin.fail()) {
-      cerr << "Error: You inputted a non-integer value";
-      exit(1);
+    getLengthWidth(length, width);
+    /// cpp passes by value like c, so no need to worry 
+    /// about moving the length and width before calcArea
+    double perimeter = calcPerimeter(length, width);
+    double area = calcArea(length, width);
+    displayProperties(perimeter, area);
+
+    cout << repeat_msg << endl;
+    cin >> repeat;
+    switch (repeat) { 
+      case 'y':
+        break;
+      case 'Y':
+        break;
+      case 'n': 
+        repeat = 0;
+        break;
+      case 'N':
+        repeat = 0;
+        break;
+      default: 
+        cerr << repeat_input_err << endl;
+        exit(1);
     }
+  } while (repeat);
 
-    // compares the numbers and prints out 
-    // the appropriate message.
-    if (guess < rand_num) {
-      cout << higher_msg << '\n' << endl; 
-    } else if (guess > rand_num) {
-      cout << lower_msg << '\n' << endl;
-    }
-
-    ++num_guesses;
-  } while (guess != rand_num);
-
-
-  // makes sure the grammar is correct
-  cout << '\n' << "YOU GOT IT!!! " << u8"\u2713" << '\n';
-  if (num_guesses == 1) {
-    cout << "It took you " << num_guesses << " guess" << endl;
-  } else {
-    cout << "It took you " << num_guesses << " guesses" << endl;
-  }
-  
   return 0;
 }
 
-/// returns a random integer between 1 and 9999
-/// (using the code I wrote for the MathTutor project)
-int gen_rand_int(void) {
-	random_device rd;
-	mt19937 gen(rd());
-	uniform_int_distribution<> distrib(1, 999);
-  int num = distrib(gen);
-  return num;
+void getLengthWidth(double& length, double& width) {
+  const auto length_query = "What is the length of the rectangle? ";
+  const auto width_query = "What is the width of the rectangle? ";
+  const auto double_cin_err = 
+    "Error: user input is invalid, x > 0 && no non-integrals";
+
+  cout << length_query;
+  cin >> length;  
+  if (cin.fail() || !(length > 0)) {
+    cerr << double_cin_err << endl;
+    exit(1);
+  }
+
+  cout << width_query;
+  cin >> width;
+  if (cin.fail() || !(length > 0)) {
+    cerr << double_cin_err << endl;
+    exit(1);
+  }
+}
+
+double calcPerimeter(double length, double width) {
+  return 2 * (length + width);
+}
+ 
+double calcArea(double length, double width) {
+  return length * width;
+}
+
+void displayProperties(double perimeter, double area) {
+  cout << "The perimeter = " << perimeter << '\n'
+    << "The area = " << area << endl;
 }
