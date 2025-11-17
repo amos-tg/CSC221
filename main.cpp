@@ -1,94 +1,85 @@
-#define NUM_REGIONS 5
-#include <iostream>
+#define CELSIUS_ARR_LEN 20
+#define TABLE_LENGTH 38
+#define TABLE_MIDDLE 19
+// table length and table middle don't include the \n\t prefix
+
 #include <string>
+#include <iostream>
+#include <iomanip>
+
 using namespace std;
 
-void getRegionInfo(string& region, int& num_accidents);
-bool isLower(int x, int y);
-void showLowest(string region, int num_accidents);
+double getCelsius(double fahrenheit);
+void printTable(double celsius_table[]);
 
 int main(void) {
-  string region = ""; 
-  // comparing against uninitialized int is undefined so
-  // I'm marking this for the getRegionInfo function.
-  int num_accidents = -1;
+  // least to greatest celsius vals from 0 to 20.
+  double celsius_ltg[CELSIUS_ARR_LEN];
 
-  for (int i = 0; i < NUM_REGIONS; ++i) {
-    getRegionInfo(region, num_accidents);
+  for (int fahr = 0; fahr <= 20; ++fahr) {
+    // assigns to array from 0 too 20 
+    celsius_ltg[fahr] = getCelsius(fahr); 
   }
 
-  showLowest(region, num_accidents);
+  printTable(celsius_ltg);
 
   return 0;
 }
 
-void getRegionInfo(string& region, int& num_accidents) {
-  string region_cmp;
-  unsigned int num_accidents_cmp;
+/// Takes a double fahrenheit and returns the celsius equivalent.
+double getCelsius(double fahrenheit) {
+   // might as well get this division done at comp-time
+   constexpr double fiveOver9 = 5.0 / 9.0;  
 
-  const auto region_query = "What is the name of the region? : ";
-  const auto num_accid_query = "What is the number of accidents in the region? : ";
-
-  // handles initialization / first iteration
-  // skips over remaining code, goes to the
-  // input validation for num_accidents
-  if (num_accidents == -1) {
-    // gets region
-    cout << region_query;
-    cout.flush();
-    cin >> region; 
-
-    // gets number accidents
-    cout << num_accid_query;
-    cout.flush();
-    cin >> num_accidents;
-
-    // spaces things out
-    cout << endl;
-
-    goto validate_input;
-  }
-
-  // gets region
-  cout << region_query;
-  cout.flush();
-  cin >> region_cmp;
-
-  // gets number accidents
-  cout << num_accid_query;
-  cout.flush();
-  cin >> num_accidents_cmp;
-
-  // spaces things out
-  cout << endl;
-
-  if (isLower(num_accidents_cmp, num_accidents)) {
-    num_accidents = num_accidents_cmp;
-    region = region_cmp;
-  }
-
-  validate_input:
-    if (num_accidents < 0) {
-      cerr << "Error: (number of accidents) < 0" << endl;
-      exit(1);
-    } 
-    
-  return;
+   // returns celsius conversion
+   return (fahrenheit - 32) * fiveOver9;
 }
 
-// The directions have the function named
-// isLower but the definition says <=, I may have 
-// typed it by accident or it might be a typo.
-// Also this doesn't account for regions with equal
-// numbers of accidents. 
-// returns true if x is less than y.
-bool isLower(int x, int y) {
-  return (x <= y);
-}
+void printTable(double celsius_table[]) {
+  int i;
 
-void showLowest(string region, int num_accidents) {
-  cout << region << " had the lowest number of accidents : " 
-    << num_accidents << endl;
+  string table = "\
+\n\t_____________________________________\
+\n\t| Fahrenheit and Celsius Equivalent |\
+\n\t|-----------------------------------|";
 
-  return;  
+  // generates the seperator which is inserted below each content line.
+  string seperator = "\n\t|";
+  for (i = 0; i < TABLE_LENGTH - 2; ++i) {
+    seperator += '-';
+  }
+  seperator += '|';
+
+  // generates the formatted content line and adds it to the 
+  // table appending the seperator afterward.
+  for (i = 0; i < CELSIUS_ARR_LEN; ++i) {
+    int i2, offset;
+    string table_item = "|";
+
+    // generates the content line
+    for (i2 = 0; i2 < TABLE_LENGTH - 2; ++i2) {
+      table_item += ' ';
+    }
+    table_item += '|';
+    table_item[TABLE_MIDDLE] = '|';
+
+    string fahrenheit = to_string(i);
+    int fahr_len = fahrenheit.length();
+    for (offset = (fahr_len - 1), i2 = 0; i2 < fahr_len; ++i2, --offset) {
+      table_item[TABLE_MIDDLE - offset] = fahrenheit[i2];
+    }
+
+    string celsius{ "" }; 
+
+    int celsius_len = celsius.length();
+    for (offset = (celsius_len - 1), i2 = 0; i2 < celsius_len; ++i2, --offset) {
+      table_item[TABLE_LENGTH - offset] = celsius[i2];
+    }
+
+    // appends the content line and the premade-seperator line to the table
+    // as well as the leading whitespace.
+    table += ("\n\t" + table_item + seperator);
+  }
+
+  cout << table << endl;
 }
