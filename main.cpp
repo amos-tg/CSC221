@@ -1,95 +1,130 @@
-#define CELSIUS_ARR_LEN 20
-#define TABLE_LENGTH 38
-#define TABLE_MIDDLE 19
-
-#include <string>
+#define NUM_SCORES 5
 #include <iostream>
-#include <format>
+
 
 using namespace std;
 
-double getCelsius(double fahrenheit);
-void printTable(double celsius_table[]);
+
+void getScore(
+   string judge_name, double& min_score,
+   double& max_score, double& score_total);
+
+bool isLower(double x, double y);
+bool isHigher(double x, double y);
+
+double calcAverage(
+    double score_total, int num_scores,
+    double min_score, double max_score);
+
+const char *judge_names[5] = {
+  "Joody", "Professor Sprague", "Doctor Phil", 
+  "Guy Fierri", "Genghis Khan", };
 
 int main(void) {
-  // least to greatest celsius vals from 0 to 20.
-  double celsius_ltg[CELSIUS_ARR_LEN];
+  double min_score, max_score, score_total, average;
 
-  // loops over the range of requested fahrenheit values and assigns
-  // the celsius equivalent in the array at the index fahrenheit value i.e. 
-  // celsius_ltg[32] would equal 0 because (32F = 0C)
-  for (int fahr = 0; fahr <= 20; ++fahr) {
-    // assigns to array from 0 too 20 
-    celsius_ltg[fahr] = getCelsius(fahr); 
+  min_score = 11;
+  max_score = -1;
+
+  for (int i = 0; i < 5; ++i) {
+    getScore(
+      judge_names[i], min_score,
+      max_score, score_total);
   }
 
-  // messy messy messy
-  printTable(celsius_ltg);
+  average = calcAverage(
+    score_total, NUM_SCORES,
+    min_score, max_score);
+
+  // the directions don't say we need to print the value 
+  // but that is probably what is expected. 
+  cout << "The final score is : " << average << endl;
 
   return 0;
 }
 
-/// Takes a double fahrenheit and returns the celsius equivalent.
-double getCelsius(double fahrenheit) {
-   // might as well get this division done at comp-time
-   constexpr double fiveOver9 = 5.0 / 9.0;  
+// The directions say between 0 and 10, it's not clear if 0 and 10
+// are included in the range. Normally you can give someone a 10 so 
+// I'm going to assume that it is an inclusive range. Both 0 and 10 
+// will be valid inputs to the program.
+//
+/// judge_name: a string that gets printed out which shows  
+///             different judges are being asked for their scores.
+///
+/// min_score: a reference to a double which represents the minimum 
+///            recieved score.
+///
+/// max_score: a reference to a double which represents the maximum 
+///            recieved score.
+///
+/// score_total: a reference to a double which represents the total 
+///              of all the scores recieved so far.
+///
+/// First, the func. queries the judge for their score, then it adds
+/// the score to the score_total parameter, it will set min_score to 
+/// score if the score is less than or equal to the min_score param
+/// and it will set max_score to score if score is greater than or 
+/// to max_score. I know that the equal to part isn't needed but it's  
+/// part of the directions so I'm doing it anyway.
+///
+/// The function will exit the program if there is invalid user input 
+void getScore(
+    string judge_name, double& min_score,
+    double& max_score, double& score_total) 
+{
+  double score;
 
-   // returns celsius conversion
-   return (fahrenheit - 32) * fiveOver9;
-}
+  cout << "Judge " << judge_name
+    << ", what do you rate the performance between zero and ten? : ";
+  cout.flush();
+  cin >> score;
 
-/// takes the celsius table which maps to  
-/// fahrenheit values by index and formats 
-/// the output based on the table before printing
-/// the right adjusted graph.
-void printTable(double celsius_table[]) {
-  int i;
-
-  string table = "\
-\n\t|------------------------------------|\
-\n\t| Fahrenheit and Celsius Equivalents |\
-\n\t|------------------------------------|\
-\n\t|       Fahrenheit |         Celsius |\
-\n\t|------------------------------------|";
-
-  // generates the seperator which is inserted below each content line.
-  string seperator = "\n\t|";
-  for (i = 0; i < TABLE_LENGTH - 2; ++i) {
-    seperator += '-';
-  }
-  seperator += '|';
-
-  // generates the formatted content line and adds it to the 
-  // table appending the seperator afterward.
-  for (i = 0; i <= CELSIUS_ARR_LEN; ++i) {
-    int i2, offset;
-    string table_item = "|";
-
-    // generates the content line
-    for (i2 = 0; i2 < TABLE_LENGTH - 2; ++i2) {
-      table_item += ' ';
-    }
-    table_item += '|';
-    table_item[TABLE_MIDDLE] = '|';
-
-    // this sets the fahrenheit value inside the content line right adjusted
-    string fahrenheit = to_string(i);
-    int fahr_len = fahrenheit.length();
-    for (offset = (fahr_len + 1), i2 = 0; i2 < fahr_len; ++i2, --offset) {
-      table_item[TABLE_MIDDLE - offset] = fahrenheit[i2];
-    }
-
-    // This sets the celsius value inside the content line right adjusted
-    string celsius = format("{:.1F}", celsius_table[i]);
-    int celsius_len = celsius.length();
-    for (offset = (celsius_len + 2), i2 = 0; i2 < celsius_len; ++i2, --offset) {
-      table_item[TABLE_LENGTH - offset] = celsius[i2];
-    }
-
-    // appends the content line and the premade-seperator line to the table
-    // as well as the leading whitespace.
-    table += ("\n\t" + table_item + seperator);
+  if (score < 0 || score > 10) {
+    cerr << "Error: Invalid score, not between 0 and 10" << endl;
+    exit(1);
   }
 
-  cout << table << endl;
+  score_total += score;
+
+  if (isLower(score, min_score)) {
+    min_score = score;
+  } 
+
+  if (isHigher(score, max_score)) {
+    max_score = score;
+  }
 }
+
+/// If x is less than or equal to y return true, else return false.
+///
+/// this function makes the code less clear and is too short 
+/// to be a function by itself but it is in the directions 
+/// so I'll include it anyway.
+bool isLower(double x, double y) {
+  return (x <= y);
+}
+
+/// If x is greater than or equal to y return true, else return false.
+///
+/// this function makes the code less clear and is too short 
+/// to be a function by itself but it is in the directions 
+/// so I'll include it anyway.
+bool isHigher(double x, double y) {
+  return (x >= y); 
+}
+
+/// score_total: The sum of all scores
+/// num_scores: The number of individual scores which make up score_total
+/// min_score: The lowest score value recieved 
+/// max_score: The highest score value recieved
+///
+/// This function returns the average of all the scores with the outliers,   
+/// the minimum and maximum scores, removed so the average is not skewed. 
+double calcAverage(
+    double score_total, int num_scores,
+    double min_score, double max_score)
+{
+  score_total -= (min_score + max_score);
+  return (score_total / num_scores); 
+}
+
