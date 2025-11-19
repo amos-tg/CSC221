@@ -124,6 +124,9 @@ double calcAverage(
     double score_total, int num_scores,
     double min_score, double max_score)
 {
+  // this accounts for the removed scores
+  // in the num_scores variable
+  num_scores -= 2;
   score_total -= (min_score + max_score);
   return (score_total / num_scores); 
 }
