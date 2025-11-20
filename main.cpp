@@ -1,133 +1,116 @@
-#define NUM_SCORES 5
 #include <iostream>
-
-
+#include <vector>
+#include <iomanip>
+#include <cmath>
 using namespace std;
 
+struct RoomInputs {
+  double price_paint_per_gallon;
+  double square_feet;
+};
 
-void getScore(
-   string judge_name, double& min_score,
-   double& max_score, double& score_total);
+struct RoomOutputs {
+  int num_rooms;
+  double gals_paint; 
+  double labor_hours;
+  double labor_cost;
+  double paint_cost;
+  double total_cost;
+};
 
-bool isLower(double x, double y);
-bool isHigher(double x, double y);
-
-double calcAverage(
-    double score_total, int num_scores,
-    double min_score, double max_score);
-
-const char *judge_names[5] = {
-  "Joody", "Professor Sprague", "Doctor Phil", 
-  "Guy Fierri", "Genghis Khan", };
+vector<RoomInputs> getRoomSpec(void);
+RoomOutputs calcRoomCosts(vector<RoomInputs> rooms);
+void displayRoomSpec(RoomOutputs room);
 
 int main(void) {
-  double min_score, max_score, score_total, average;
-
-  min_score = 11;
-  max_score = -1;
-
-  for (int i = 0; i < 5; ++i) {
-    getScore(
-      judge_names[i], min_score,
-      max_score, score_total);
-  }
-
-  average = calcAverage(
-    score_total, NUM_SCORES,
-    min_score, max_score);
-
-  // the directions don't say we need to print the value 
-  // but that is probably what is expected. 
-  cout << "The final score is : " << average << endl;
-
+  vector<RoomInputs> room_user_input_vals = getRoomSpec();
+  RoomOutputs room_display_costs = calcRoomCosts(room_user_input_vals);
+  displayRoomSpec(room_display_costs);
   return 0;
 }
 
-// The directions say between 0 and 10, it's not clear if 0 and 10
-// are included in the range. Normally you can give someone a 10 so 
-// I'm going to assume that it is an inclusive range. Both 0 and 10 
-// will be valid inputs to the program.
-//
-/// judge_name: a string that gets printed out which shows  
-///             different judges are being asked for their scores.
-///
-/// min_score: a reference to a double which represents the minimum 
-///            recieved score.
-///
-/// max_score: a reference to a double which represents the maximum 
-///            recieved score.
-///
-/// score_total: a reference to a double which represents the total 
-///              of all the scores recieved so far.
-///
-/// First, the func. queries the judge for their score, then it adds
-/// the score to the score_total parameter, it will set min_score to 
-/// score if the score is less than or equal to the min_score param
-/// and it will set max_score to score if score is greater than or 
-/// to max_score. I know that the equal to part isn't needed but it's  
-/// part of the directions so I'm doing it anyway.
-///
-/// The function will exit the program if there is invalid user input 
-void getScore(
-    string judge_name, double& min_score,
-    double& max_score, double& score_total) 
-{
-  double score;
+vector<RoomInputs> getRoomSpec(void) {
+  const char *input_err = "Error: invalid user input";
+  vector<RoomInputs> rooms;
+  int num_rooms;
 
-  cout << "Judge " << judge_name
-    << ", what do you rate the performance between zero and ten? : ";
+  cout << "How many rooms need to be painted? : ";
   cout.flush();
-  cin >> score;
-
-  if (score < 0 || score > 10) {
-    cerr << "Error: Invalid score, not between 0 and 10" << endl;
+  cin >> num_rooms;
+  if (cin.fail() || num_rooms < 1) {
+    cerr << input_err << endl;
     exit(1);
   }
 
-  score_total += score;
+  cout << endl;
 
-  if (isLower(score, min_score)) {
-    min_score = score;
-  } 
+  for (int i = 0; i < num_rooms; ++i) {
+    struct RoomInputs room;
 
-  if (isHigher(score, max_score)) {
-    max_score = score;
+    cout << "How much does paint cost per gallon for room " 
+      << (i + 1) << "? : $";
+    cout.flush();
+    cin >> room.price_paint_per_gallon;
+    if (cin.fail() || room.price_paint_per_gallon < 10.0) {
+      cerr << input_err << endl;
+      exit(1);
+    }
+
+    cout << "What is the total wall space square footage in room " 
+      << (i + 1) << "? : ";
+    cout.flush();
+    cin >> room.square_feet;
+    if (cin.fail() || room.square_feet < 0) {
+      cerr << input_err << endl;
+      exit(1);
+    } 
+
+    cout << endl; 
+
+    rooms.push_back(room); 
   }
+
+  cout << '\n' << endl;
+
+  return rooms;
 }
 
-/// If x is less than or equal to y return true, else return false.
-///
-/// this function makes the code less clear and is too short 
-/// to be a function by itself but it is in the directions 
-/// so I'll include it anyway.
-bool isLower(double x, double y) {
-  return (x <= y);
+
+RoomOutputs calcRoomCosts(vector<RoomInputs> rooms) {
+  double square_ft_total = 0;
+  RoomOutputs room_vals{ 0, 0, 0, 0, 0, 0 };
+  room_vals.num_rooms = rooms.size();
+
+  /// gallons per square foot
+  constexpr double gpsf = { 1.0 / 110.0 };
+  /// labor per square foot
+  constexpr double lpsf = { 8.0 / 110 };
+  /// labor charge per hour
+  const double lcph = 25.0;
+
+  for (int i = 0; i < room_vals.num_rooms; ++i) {
+    double room_gals_paint;
+    square_ft_total += rooms[i].square_feet;      
+    room_gals_paint = ceil(rooms[i].square_feet * gpsf);
+    room_vals.gals_paint += room_gals_paint;
+    room_vals.paint_cost += room_gals_paint * rooms[i].price_paint_per_gallon;
+  }
+
+  room_vals.labor_hours = square_ft_total * lpsf;
+  room_vals.labor_cost = room_vals.labor_hours * lcph;
+  room_vals.total_cost += room_vals.labor_cost + room_vals.paint_cost; 
+
+  return room_vals;
 }
 
-/// If x is greater than or equal to y return true, else return false.
-///
-/// this function makes the code less clear and is too short 
-/// to be a function by itself but it is in the directions 
-/// so I'll include it anyway.
-bool isHigher(double x, double y) {
-  return (x >= y); 
+void displayRoomSpec(RoomOutputs room) {
+  cout 
+    << fixed << setprecision(0) 
+    << "Estimate for Painting " << room.num_rooms << " Rooms:" << '\n'
+    << "Gallons of paint to purchase: " << room.gals_paint << '\n'
+    << setprecision(2)
+    << "Number of hours required to paint rooms: " << room.labor_hours << '\n'
+    << "Cost of paint: $" << room.paint_cost << '\n' 
+    << "Cost of labor: $" << room.labor_cost << '\n'
+    << "Total cost for job: $" << room.total_cost << endl;
 }
-
-/// score_total: The sum of all scores
-/// num_scores: The number of individual scores which make up score_total
-/// min_score: The lowest score value recieved 
-/// max_score: The highest score value recieved
-///
-/// This function returns the average of all the scores with the outliers,   
-/// the minimum and maximum scores, removed so the average is not skewed. 
-double calcAverage(
-    double score_total, int num_scores,
-    double min_score, double max_score)
-{
-  // this accounts for the removed scores
-  // in the num_scores variable
-  num_scores -= 2;
-  score_total -= (min_score + max_score);
-  return (score_total / num_scores); 
-}
-
