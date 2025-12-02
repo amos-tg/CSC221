@@ -12,7 +12,7 @@ void displayProperties(double perimeter, double area);
 
 int main(void) {
   const auto repeat_msg = 
-    "Do you want to repeat the process? : (y/n)";
+    "Do you want to repeat the process? (y/n) : ";
   const auto repeat_input_err = 
     "Error: invalid choice, use y, Y, n, or N.";
 
@@ -29,7 +29,8 @@ int main(void) {
     double area = calcArea(length, width);
     displayProperties(perimeter, area);
 
-    cout << repeat_msg << endl;
+    cout << repeat_msg;
+    cout.flush();
     cin >> repeat;
     switch (repeat) { 
       case 'y':
@@ -51,6 +52,8 @@ int main(void) {
   return 0;
 }
 
+/// set double length and width by reference
+/// based on user input
 void getLengthWidth(double& length, double& width) {
   const auto length_query = "What is the length of the rectangle? ";
   const auto width_query = "What is the width of the rectangle? ";
@@ -72,14 +75,20 @@ void getLengthWidth(double& length, double& width) {
   }
 }
 
+/// returns the perimeter of the rectangle based on it's 
+/// length and width which are passed as double params
 double calcPerimeter(double length, double width) {
   return 2 * (length + width);
 }
  
+/// returns the area of a rectangle based on it's length
+/// and width which are passed as double params 
 double calcArea(double length, double width) {
   return length * width;
 }
 
+/// prints out the perimeter and area of the rectangle
+/// the perimeter and area are passed as double params
 void displayProperties(double perimeter, double area) {
   cout << "The perimeter = " << perimeter << '\n'
     << "The area = " << area << endl;
