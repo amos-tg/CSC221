@@ -78,12 +78,12 @@ void getRegionInfo(string& region, int& num_accidents) {
   }
 
   // the infamous goto label
-  validate_input:
-    if (num_accidents < 0) {
-      cerr << "Error: (number of accidents) < 0" << endl;
-      exit(1);
-    } 
-    
+validate_input:
+  if (num_accidents < 0) {
+    cerr << "Error: (number of accidents) < 0" << endl;
+    exit(1);
+  } 
+
   return;
 }
 
