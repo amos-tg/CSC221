@@ -60,6 +60,10 @@ unsigned int gradeExam(
 /// the incorect answer.
 ///
 /// unsigned int numWrong = the number of incorect questions
+///
+///
+/// prints out all the info in a nicely formatted way with some information around how 
+/// well the checked answers did.
 void writeReport(
     unsigned int (&answerNumber)[20], char (&answer2D)[2][20], 
     unsigned int numWrong);
