@@ -129,7 +129,7 @@ unsigned int gradeExam(
     if (answerKey[i] != answerChecked[i]) {
       // sets the wrong question's number in the parallel answerNumber array
       // index incremented by number of wrong questions so far.
-      answerNumber[numWrong] = i;
+      answerNumber[numWrong] = i + 1;
 
       // sets the answer key and incorrect answer in the 2D array based on 
       // the index of how many questions have been wrong so far.
@@ -159,6 +159,8 @@ void writeReport(
     << categories << '\n';
   
   for (int i = 0; i < numWrong; ++i) {
+    // I add the previous messages whitespace counter since it is divided
+    // by two to put the displayed value close to the middle of its label
     cout << setfill(' ') << right
       << setw(q_msg_begin) << answerNumber[i] << "   "
       << setw(q_msg_begin + c_a_msg_begin) << answer2D[0][i] << "   "
