@@ -19,10 +19,13 @@ using namespace std;
 ///
 /// char (&answerChecked)[20] = the buf the submitted answers are loaded into.
 ///
-/// Reads the answer key at answerPath into the answerKey buffer.
 ///
-/// Failure to read the answer key from answerPath will terminate the program 
-/// with an error.
+/// Reads the answer key at answerKeyPath into the answerKey buffer.
+///
+/// Reads the submitted answers at answerCheckedPath into the answerChecked buffer.
+///
+/// Failure to read the answers from either of the paths will terminate the 
+/// program with an error.
 void getAnswers(
   char *answerKeyPath, char *answerCheckedPath,
   char (&answerKey)[20], char (&answerChecked)[20]);
@@ -33,10 +36,10 @@ void getAnswers(
 /// 
 /// char (&answer2D)[2][20] = the two dimensional array storing the correct and
 /// incorect answers parallel to one another. First dimension stores the correct 
-/// answer, second dimension store the incorect answer. 
+/// answers, second dimension stores the incorrect answers. 
 ///
-/// char (&answerNumber)[20] = array storing the corresponding question number, 
-/// parallel of answer2D. 
+/// char (&answerNumber)[20] = array storing the corresponding incorrect question numbers
+/// in parallel of answer2D. 
 ///
 ///
 /// Checks the students answers against the answer key and returns the number 
@@ -86,12 +89,14 @@ void getAnswers(
   char *answerKeyPath, char *answerCheckedPath,
   char (&answerKey)[20], char (&answerChecked)[20]) 
 {
+  // opens the answer key file
   ifstream stream(answerKeyPath); 
   if (!stream) {
     cerr << "Error: failed to open answer key file" << endl;
     terminate();
   }
 
+  // reads answer key file
   for (char &answer: answerKey) {
     if ( !(stream >> answer) ) {
       cerr << "Error: failed to read from answer key file" << endl;
@@ -99,24 +104,29 @@ void getAnswers(
     }
   }
 
+  // closes answer key file
   stream.close();
   if (stream.fail()) {
     cerr << "Error: failed to close the opened answer key file" << endl;
     terminate();
   }
 
+  // opens submitted answer file
   stream.open(answerCheckedPath);
   if (!stream) {
     cerr << "Error: failed to open submitted answers file" << endl;
     terminate();
   }
 
+  // reads submitted answer file
   for (char &answer: answerChecked) {
     if ( !(stream >> answer) ) {
       cerr << "Error: failed to read from answer key file" << endl;
       terminate();
     }
   } 
+
+  // destructor handles the ifstream closure
 }
 
 unsigned int gradeExam(
@@ -147,6 +157,7 @@ void writeReport(
     unsigned int (&answerNumber)[20], char (&answer2D)[2][20], 
     unsigned int numWrong)
 {
+  // whitespace indexes generated at comptime
   constexpr size_t q_msg_begin = sizeof("Question") / 2;
   constexpr size_t c_a_msg_begin = sizeof("Correct Answer") / 2;
   constexpr size_t y_a_msg_begin = sizeof("Your Answer") / 2;
@@ -166,6 +177,17 @@ void writeReport(
       << setw(q_msg_begin + c_a_msg_begin) << answer2D[0][i] << "   "
       << setw(c_a_msg_begin + y_a_msg_begin) << answer2D[1][i] << '\n';
   }
+  
+  double score_percentage = 100.0 - ((numWrong / 20.0) * 100);
 
-  cout.flush();
+  string pass_fail_msg; 
+  if (score_percentage < 65.0) {
+    pass_fail_msg = "You failed the exam.";
+  } else {
+    pass_fail_msg = "You passed the exam.";
+  }
+
+  cout << "Test score: " << fixed << setprecision(2) 
+    << score_percentage << '%' << '\n'
+    << pass_fail_msg << endl;
 }
