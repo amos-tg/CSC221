@@ -28,6 +28,7 @@ int main(void) {
   vector<string> team_names{}, winner_team_names{};
   string query_team_name;
 
+  // read the team names and the winner team names into vectors
   getTeams(team_names_path, team_names); 
   getTeams(winner_team_names_path, winner_team_names);
 
@@ -38,6 +39,8 @@ int main(void) {
 
   cout.flush();
 
+  // loop over the team name query and display information
+  // until user enters quit.
   for (;;) {
     cout << '\n' << "Enter the name of a team (enter quit to end): ";
     cout.flush();
@@ -66,9 +69,10 @@ int main(void) {
 }
 
 void getTeams(string file_path, vector<string> &team_names) {
-  ifstream file(file_path);
   string tname;
 
+  // opens the file and checks if it opened
+  ifstream file(file_path);
   if (!file) {
     cerr << "Error: failed to open file" << file_path << endl;
     terminate();
@@ -76,16 +80,20 @@ void getTeams(string file_path, vector<string> &team_names) {
 
   while (getline(file, tname)) {
     // having an issue where '\r' postfixes every team name.
+    // I think windows.txt files have a carriage line return or
+    // something wierd going on that doesn't work on linux.
     if (tname[tname.length() - 1] == '\r') {
       tname.pop_back();
     }
     
+    // pushes the team name onto team names vector line by line
     team_names.push_back(tname);
-    tname.clear();
   }
 }
 
 unsigned findWinners(string query_team_name, const vector<string> &team_names) {
+  // iterates over the team_names and increments a counter for every match
+  // of the query_team_name.
   unsigned counter{};
   for (const string &tname: team_names) {
     if (tname == query_team_name) { 
