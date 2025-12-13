@@ -1,5 +1,5 @@
-#include <exception>
 #include <iostream>
+
 using namespace std;
 
 /// clears the screen using ANSI escape codes.
@@ -66,17 +66,12 @@ int main(void) {
   char token = 'X';
   for (int i = 1; i < 10; ++i) {
     placeToken(token, board);
-
-    if (token == 'X') {
-      token = 'O';   
-    } else {
-      token = 'X';
-    }
-
     clearScreen();
 
     auto win_msg = " Won the Game!";
     switch (getBoardState(token, board)) {
+      case PLAY:
+        break;
       case X_WIN:
         i = 10;
         cout << 'X' << win_msg << endl;
@@ -89,11 +84,15 @@ int main(void) {
         i = 10;
         cout << "Nobody" << win_msg << endl;
         break;
-      case PLAY:
-        break;
     }
 
     displayBoard(board);
+
+    if (token == 'X') {
+      token = 'O';   
+    } else {
+      token = 'X';
+    }
   } 
 
 
@@ -148,12 +147,10 @@ void placeToken(char token, char (&board)[3][3]) {
     switch (board[row][column]) {
       case 'X':
         cout << taken_msg << endl;
-        cin >> enter;
         continue;
         break;
       case 'O':
         cout << taken_msg << endl;
-        cin >> enter;
         continue;
         break;
     }
@@ -218,7 +215,7 @@ unsigned checkBoard(char token, char (&board)[3][3]) {
   for (char (&row)[3]: board) {
     for (int i = 0; i < 3; ++i) {
       if (token != row[i]) {
-        continue;
+        break;
       } else if (i == 2) {
         return WINNER;
       }
@@ -229,7 +226,7 @@ unsigned checkBoard(char token, char (&board)[3][3]) {
   for (int col = 0; col < 3; ++col) {
     for (int row = 0; row < 3; ++row) {
       if (token != board[row][col]) {
-        continue;
+        break;
       } else if (row == 2) {
         return WINNER;
       }
