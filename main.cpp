@@ -1,6 +1,23 @@
+// WARNING: 
+// this may or may not work if you don't have virtual terminal 
+// processing enabled on your console. WARNING: because of the
+// ANSI escape codes I use which when printed to the screen 
+// clear a line or the screen 
+//
+// https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+#if defined(_WIN64)
+  #include <windows.h>
+#endif
+
 #include <iostream>
 
 using namespace std;
+
+
+#if defined(_WIN64)
+/// sets virtual terminal mode if the OS is windows
+void setVirtTermSeq(void);
+#endif
 
 /// clears the screen using ANSI escape codes.
 void clearScreen(void);
@@ -57,6 +74,13 @@ enum { SPACE_LEFT, NO_SPACE, WINNER };
 unsigned checkBoard(char token, char (&board)[3][3]);
 
 int main(void) {
+  // this is untested so I am hoping it 
+  // makes my ANSI escape codes cross platform
+  // I think it is safe to guess you are on a 64 bit processor
+  #if defined(_WIN64) 
+    setVirtTermSeq();
+  #endif
+
   char board[3][3];
 
   clearScreen();
@@ -98,6 +122,34 @@ int main(void) {
 
   return 0;
 }
+
+
+#if defined(_WIN64)
+// allegedly inspired this from megasoft documentation
+// this is not a legal admission of lawful or unlawful usage
+void setVirtTermSeq(void) {
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (hOut == INVALID_HANDLE_VALUE)
+  {
+    cerr << "Error: virtual terminal setting failed" << endl;
+    exit(1);
+  }
+  
+  DWORD dwMode = 0;
+  if (!GetConsoleMode(hOut, &dwMode))
+  {
+    cerr << "Error: virtual terminal setting failed" << endl;
+    exit(1);
+  }
+  
+  dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+  if (!SetConsoleMode(hOut, dwMode))
+  {
+    cerr << "Error: virtual terminal setting failed" << endl;
+    exit(1);
+  }
+}
+#endif
 
 // this works on linux but I'm not sure how 
 // windows will handle ANSI escape codes.
