@@ -99,11 +99,15 @@ int main(void) {
   return 0;
 }
 
+// this works on linux but I'm not sure how 
+// windows will handle ANSI escape codes.
 void clearScreen(void) {
   cout << "\033[2J\033[H"; 
   cout.flush();
 }
 
+// this works on linux but I'm not sure how 
+// windows will handle ANSI escape codes.
 void clearLine(void) {
   cout << "\033[2K";
   cout.flush();
@@ -118,9 +122,13 @@ void initializeBoard(char (&board)[3][3]) {
 }
 
 void displayBoard(char (&board)[3][3]) {
-  cout << '\n' << "   | 1 | 2 | 3 |" 
-    << '\n' << "----------------" << '\n';
+  const auto seperator = "----------------";
 
+  // prints out the column labels
+  cout << '\n' << "   | 1 | 2 | 3 |" 
+    << '\n' << seperator << '\n';
+
+  // prints out the row labels and the row's contents
   for (int row = 0; row < 3; ++row) {
     cout << ' ' << (row+1) << " | ";
 
@@ -128,22 +136,24 @@ void displayBoard(char (&board)[3][3]) {
       cout << token << " | "; 
     }
 
-    cout << '\n' << "----------------" << '\n';
+    cout << '\n' << seperator << '\n';
   }  
 
   cout.flush();
 }
 
+
 void placeToken(char token, char (&board)[3][3]) {
   unsigned short row, column;  
+
   auto taken_msg = 
     "The location inputted is already taken... (hit enter to try again)";
 
   for (;;) {
-    string enter; 
-
     getLocation(row, column, token);
 
+    // checks to see if the spot on the board is available
+    // and asks for a different one if it's taken
     switch (board[row][column]) {
       case 'X':
         cout << taken_msg << endl;
@@ -163,6 +173,7 @@ void placeToken(char token, char (&board)[3][3]) {
 void getLocation(unsigned short &row, unsigned short &column, char token) {
   auto input_err = "Error: invalid input";
 
+  // gets the row and validates it or exits the prog.
   cout << "Input the row to place the " << token << " at: ";
   cin >> row;
   if (cin.fail() || row > 3 || row < 1) {
@@ -171,8 +182,8 @@ void getLocation(unsigned short &row, unsigned short &column, char token) {
   }
 
   clearLine();
-  cout.flush();
 
+  // gets the column and validates it or exits the prog.
   cout << "Input the column to place the " << token << " at: ";
   cin >> column;
   if (cin.fail() || column > 3 || column < 1) {
@@ -181,7 +192,6 @@ void getLocation(unsigned short &row, unsigned short &column, char token) {
   }
 
   clearLine();
-  cout.flush();
 
   // account for zero based indexing
   --row;
@@ -189,11 +199,13 @@ void getLocation(unsigned short &row, unsigned short &column, char token) {
 }
 
 unsigned getBoardState(char token, char (&board)[3][3]) {
+  // parses the game state enum val from checkBoard into more
+  // descriptive game state val returned from this function.
   switch (checkBoard(token, board)) {
     case SPACE_LEFT:
       return PLAY; 
       break;
-    case WINNER:
+    case WINNER: 
       if (token == 'X') {
         return X_WIN;
       } else if (token == 'O') {
@@ -257,7 +269,7 @@ unsigned checkBoard(char token, char (&board)[3][3]) {
     }
   }
 
-  // nothing matched, so we check for space now
+  // nothing matched, checks for space now
   for (char (&row)[3]: board) {
     for (char &spot: row) {
       if ('*' == spot) {
@@ -266,7 +278,7 @@ unsigned checkBoard(char token, char (&board)[3][3]) {
     }
   }
 
-  // we didn't find any winners or space so we return NO_SPACE
+  // didn't find any winners or space so we return NO_SPACE
   return NO_SPACE;
 }
 
